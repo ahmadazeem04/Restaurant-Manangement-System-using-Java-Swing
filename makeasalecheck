@@ -1,0 +1,509 @@
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import javax.swing.*;
+import java.sql.*;
+import java.util.*;
+import java.util.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
+class makeasalecheck extends JFrame implements ActionListener
+{
+    JPanel vp1,vp1a,vp1b,vp1c,vp2,vp3,vptop,vpsouth,vcenter,vcenterbot;
+    JLabel head,choose,gst,price[],price1[],subtot,subtot1,gstadd,gstadd1,grandtot,grandtot1,pay,pay1;
+    //TextField p;
+    JButton back,ok,add,save;
+    JComboBox cat[],subcat[],qty[];
+    int n=0;
+    ResultSet rs,rs1;
+    Statement st,st1;
+    Connection con;
+    Date d;
+    DateFormat fd;
+    String date;
+    int autoid,billid;
+    
+    public void actionPerformed(ActionEvent ae)
+     {
+        if(ae.getSource()==back)
+        {
+            homepage p=new homepage();
+            this.dispose();
+        }
+         for(int i=0;i<12;i++)
+         {
+         if(ae.getSource()==cat[i])
+        {
+            if(!(cat[i].getSelectedItem().toString().equals("DEFAULT")))
+            {
+              subcat[i].setEnabled(true);
+              qty[i].setEnabled(true);
+            }
+            else
+            {
+              subcat[i].setEnabled(false);
+              qty[i].setEnabled(false);
+            }
+           for(int j=1;j<=10;j++)
+         {
+             qty[i].addItem(""+j);
+         }
+
+             String s=cat[i].getSelectedItem().toString();
+             System.out.println(s+"clicked");
+
+              s=cat[i].getSelectedItem().toString();
+             System.out.println(s+"clicked");
+            if(s.equals("PIZZA"))
+            {
+                subcat[i].removeAllItems();
+                subcat[i].addItem("SUB CATEGORY");
+                subcat[i].addItem("VEGGIE PIZZA");
+                subcat[i].addItem("EXOTIC VEG.PIZZA");
+                subcat[i].addItem("COTTAGE CHEESE PIZZA");
+                subcat[i].addItem("MUSHROOM CORN PIZZA");
+            }
+
+             if(s.equals("BURGER"))
+            {
+                subcat[i].removeAllItems();
+                subcat[i].addItem("SUB CATEGORY");
+                subcat[i].addItem("VEG. CHEESE BURGER");
+                subcat[i].addItem("DOUBLE CHEESE BURGER");
+                subcat[i].addItem("COTTAGE CHEESE BURGER");
+                subcat[i].addItem("JUMBO KING BURGER");
+            }
+
+              if(s.equals("REFRESHMENTS"))
+            {
+                subcat[i].removeAllItems();
+                subcat[i].addItem("SUB CATEGORY");
+                subcat[i].addItem("COCA COLA");
+                subcat[i].addItem("SPRITE");
+                subcat[i].addItem("MIRINDA");
+                subcat[i].addItem("LIMCA");
+            }
+
+        }
+         }
+         for(int i=0;i<12;i++)
+         {
+         if(ae.getSource()==qty[i])
+         {
+             String n=qty[i].getSelectedItem().toString();
+             System.out.println(n);
+             int n1=Integer.parseInt(n);
+             System.out.println(n1);
+             String sub=subcat[i].getSelectedItem().toString();
+             System.out.println(sub);
+           if(sub.equals("VEGGIE PIZZA"))
+           {
+               int bill=n1*150;
+               System.out.println(bill);
+               price1[i].setText(""+bill);
+               //price1[i].setText("?"+bill+"/-");
+           }
+            if(sub.equals("VEGGIE PIZZA"))
+           {
+               int bill=n1*150;
+               System.out.println(bill);
+               price1[i].setText(""+bill);
+               //price1[i].setText("?"+bill+"/-");
+           }
+            if(sub.equals("EXOTIC VEG.PIZZA"))
+           {
+               int bill=n1*160;
+               System.out.println(bill);
+               price1[i].setText(""+bill);
+               //price1[i].setText("?"+bill+"/-");
+           }
+              if(sub.equals("COTTAGE CHEESE PIZZA"))
+           {
+               int bill=n1*200;
+               System.out.println(bill);
+               price1[i].setText(""+bill);
+              // price1[i].setText("?"+bill+"/-");
+           }
+               if(sub.equals("MUSHROOM CORN PIZZA"))
+           {
+               int bill=n1*250;
+               System.out.println(bill);
+               price1[i].setText(""+bill);
+               //price1[i].setText("?"+bill+"/-");
+           }
+                if(sub.equals("VEG. CHEESE BURGER"))
+           {
+               int bill=n1*120;
+               System.out.println(bill);
+               price1[i].setText(""+bill);
+               //price1[i].setText("?"+bill+"/-");
+           }
+                 if(sub.equals("DOUBLE CHEESE BURGER"))
+           {
+               int bill=n1*110;
+               System.out.println(bill);
+               price1[i].setText(""+bill);
+               //price1[i].setText("?"+bill+"/-");
+           }
+                  if(sub.equals("COTTAGE CHEESE BURGER"))
+           {
+               int bill=n1*140;
+               System.out.println(bill);
+               price1[i].setText(""+bill);
+               
+           }
+           if(sub.equals("JUMBO KING BURGER"))
+           {
+               int bill=n1*150;
+               System.out.println(bill);
+               price1[i].setText(""+bill);
+               
+           }
+           if(sub.equals("COCA COLA"))
+           {
+               int bill=n1*50;
+               System.out.println(bill);
+               price1[i].setText(""+bill);
+               
+           }
+           if(sub.equals("SPRITE"))
+           {
+               int bill=n1*50;
+               System.out.println(bill);
+               price1[i].setText(""+bill);
+               
+           }
+         if(sub.equals("MIRINDA"))
+           {
+               int bill=n1*50;
+               System.out.println(bill);
+               price1[i].setText(""+bill);
+               
+           }
+         if(sub.equals("LIMCA"))
+           {
+               int bill=n1*50;
+               System.out.println(bill);
+               price1[i].setText(""+bill);
+               
+           }
+         }
+         
+
+         }
+
+         if(ae.getSource()==save)             
+         {
+            try
+            { 
+                 rs.last();
+                 int bill=rs.getInt("bill_id");
+                 billid=bill+1;
+                 
+                 DateFormat fd=new SimpleDateFormat("yyyy-MM-dd");
+                 d=new Date();
+                 date=fd.format(d);
+                 
+                 
+                 String a=subtot1.getText();
+                 String b=gstadd1.getText();
+                 String c=grandtot1.getText();
+                 String sql1="Insert Into gst values("+"\'"+billid+"\',"+"\'"+a+"\',"+"\'"+b+"\',"+"\'"+c+"\',"+"\'"+date+"\')"; 
+                 st1.executeUpdate(sql1);
+                 System.out.print(sql1);
+                 rs1=st1.executeQuery("select*from purchase");
+                 System.out.println("Record inserted successfully");
+             for(int i=0;i<12;i++)
+             {
+                 rs.last();
+             int auto=rs.getRow();
+                  autoid=auto+1;
+                 String[] cat1=new String[12];
+                 String[] subcat1=new String[12];
+                 String[] qty1=new String[12];
+                 String[] price11=new String[12];
+                 
+                 
+                 cat1[i]=cat[i].getSelectedItem().toString();
+                 subcat1[i]=subcat[i].getSelectedItem().toString();
+                 qty1[i]=qty[i].getSelectedItem().toString();
+                 price11[i]=price1[i].getText().toString();
+                
+               
+                 //System.out.println(date);
+             if(!(price11[i].equals("0")))
+             {
+                 String sql="Insert Into purchase values("+"\'"+autoid+"\',"+"\'"+billid+"\',"+"\'"+cat1[i]+"\',"+"\'"+subcat1[i]+"\',"+"\'"+qty1[i]+"\',"+"\'"+price11[i]+"\',"+"\'"+date+"\',"+"\'"+null+"\')";   
+                 st.executeUpdate(sql);
+                 System.out.print(sql);
+                 rs=st.executeQuery("select*from purchase");
+                 System.out.println("Record inserted successfully");                                
+
+             }
+             }
+            
+            }catch(Exception e)
+                     {
+                     System.out.println(e.toString());
+                     
+                     }
+            save.setEnabled(false);
+         }
+         if(ae.getSource()==ok)
+
+        {
+            save.setEnabled(true);
+            //String tot[];// =null;
+            String[]tot=new String[12];
+            int[]sum=new int[12];
+             //int sum[] = null;
+             int sub=0;
+             double gsta=0;
+             double grand=0;
+         for(int j=0;j<12;j++)
+         {
+
+            tot[j]=price1[j].getText();
+            sum[j]=Integer.parseInt(tot[j]);
+
+            sub=sub+sum[j];
+          
+         }
+         System.out.println(sub);
+         gsta=gsta+(0.18*sub);
+         grand=sub+gsta;
+
+         subtot1.setText(""+sub);
+         gstadd1.setText(""+gsta);
+         grandtot1.setText(""+Math.round(grand));
+         pay1.setText(""+Math.round(grand)); 
+         subtot1.setFont(new Font("Arial",Font.BOLD,15));
+         gstadd1.setFont(new Font("Arial",Font.BOLD,15));
+         grandtot1.setFont(new Font("Arial",Font.BOLD,15));
+         pay1.setFont(new Font("Arial",Font.BOLD,15));
+         subtot1.setForeground(Color.red);
+         gstadd1.setForeground(Color.red);
+         grandtot1.setForeground(Color.red);
+         pay1.setForeground(Color.red);
+        }
+          if(ae.getSource()==add)
+         {
+            
+            n++;
+            if(n==12)
+            {
+                System.out.println("Can not be added more");
+            }
+            cat[n].setVisible(true);
+            subcat[n].setVisible(true);
+            qty[n].setVisible(true);
+            price[n].setVisible(true);
+            price1[n].setVisible(true);  
+            
+         }
+          
+    }
+    public makeasalecheck()
+    {
+         Container c=getContentPane();
+         c.setLayout(new BorderLayout());
+             
+         vp1=new JPanel();
+         vp1a=new JPanel();
+         vp1b=new JPanel();
+         vp1c=new JPanel();
+         vp2=new JPanel();
+         vp3=new JPanel();
+         vptop=new JPanel();
+         vpsouth=new JPanel();
+         vcenter=new JPanel();
+         vcenterbot=new JPanel();
+         head=new JLabel("WELCOME TO THE SNACK RACK");
+         choose=new JLabel("CHOOSE ITEMS");
+         gst=new JLabel("GST  18%  EXTRA");
+
+         price1=new JLabel[12];
+         price=new JLabel[12];
+         subtot=new JLabel("SUB-TOTAL:");
+         subtot1=new JLabel("");
+         gstadd=new JLabel("GST ADDED:");
+         gstadd1=new JLabel("");
+         grandtot=new JLabel("GRAND TOTAL:");
+         grandtot1=new JLabel("");
+         pay=new JLabel("YOU HAVE TO PAY:");
+         pay1=new JLabel("");
+         subtot1.setOpaque(true);
+         gstadd1.setOpaque(true);
+         grandtot1.setOpaque(true);
+         pay1.setOpaque(true);
+         subtot1.setBackground(Color.white);
+         gstadd1.setBackground(Color.white);
+         grandtot1.setBackground(Color.white);
+         pay1.setBackground(Color.white);
+
+         for(int i=0;i<12;i++)
+         {
+             price[i]=new JLabel("PRICE");
+         }
+        // p=new TextField(10);
+
+         cat=new JComboBox[12];
+         subcat=new JComboBox[12];
+         qty=new JComboBox[12];
+         /*for(int i=0;i<12;i++)
+         {
+             qty[i].addItem(""+(i+1));
+         }*/
+         for(int i=0;i<12;i++)
+         {
+             qty[i]=new JComboBox();
+             //price1[i]=new JLabel("?00/-");
+             price1[i]=new JLabel("0");
+             for(int j=1;j<=10;j++)
+         {
+
+             qty[i].addItem(""+j);
+         }
+         }
+         System.out.print("before loop");
+         for(int i=0;i<12;i++)
+         {
+            cat[i]=new JComboBox();
+            subcat[i]=new JComboBox();
+            cat[i].addItem("DEFAULT");
+            cat[i].addItem("PIZZA");
+            cat[i].addItem("BURGER");
+            cat[i].addItem("REFRESHMENTS");
+            subcat[i].addItem("DEFAULT");
+         }
+
+         back=new JButton("BACK TO HOME PAGE");
+         ok=new JButton("OK TO CONFIRM YOUR CHOICE");
+         add=new JButton("ADD ITEM(ctrl+a)");
+         save=new JButton("Save");
+         save.setBackground(Color.white);
+         save.setEnabled(false);
+         
+         vp1a.setLayout(new FlowLayout());
+         vp1b.setLayout(new FlowLayout());
+         vp1c.setLayout(new FlowLayout());
+         vp1.setLayout(new GridLayout(3,1));
+         vptop.setLayout(new BorderLayout());
+         vcenter.setLayout(new BorderLayout());
+         vcenterbot.setLayout(new GridLayout(4,2,20,5));
+         vpsouth.setLayout(new FlowLayout());
+         vp2.setLayout(new GridLayout(12,5,20,5));
+         vp3.setLayout(new FlowLayout());
+
+         head.setFont(new Font("Arial Black",Font.BOLD,44));
+         choose.setFont(new Font("Arial Black",Font.BOLD,34));
+         gst.setFont(new Font("Arial Black",Font.BOLD,40));
+         vp1a.setBackground(Color.pink);
+         vp1b.setBackground(Color.red);
+         vp1c.setBackground(Color.pink);
+         vptop.add(vp1,BorderLayout.CENTER);
+         vptop.add(vpsouth,BorderLayout.SOUTH);
+         head.setForeground(Color.red);
+         choose.setForeground(Color.white);
+         gst.setForeground(Color.red);
+         gstadd.setFont(new Font("Arial",Font.BOLD,15));
+         subtot.setFont(new Font("Arial",Font.BOLD,15));
+         grandtot.setFont(new Font("Arial",Font.BOLD,15));
+         pay.setFont(new Font("Arial ",Font.BOLD,15));
+         subtot.setForeground(Color.red);
+         gstadd.setForeground(Color.red);
+         grandtot.setForeground(Color.red);
+         pay.setForeground(Color.red);
+
+         //vp2.setBackground(Color.cyan);
+         for(int i=1;i<12;i++)
+         {
+            cat[i].setVisible(false);
+            subcat[i].setVisible(false);
+            qty[i].setVisible(false);
+            price[i].setVisible(false);
+            price1[i].setVisible(false);        
+         }
+
+         Color col=new Color(126,255,49);
+         vp2.setBackground(col);
+         vcenterbot.setBackground(col);
+         vp3.setBackground(col);
+         vpsouth.setBackground(col);
+         back.setBackground(Color.white);
+         ok.setBackground(Color.white);
+
+         for(int i=0;i<12;i++)
+         {
+             price1[i].setForeground(Color.RED);
+             price[i].setForeground(Color.RED);
+             price1[i].setOpaque(true);
+             price[i].setFont(new Font("Arial ",Font.BOLD,15));
+             price1[i].setFont(new Font("Arial ",Font.BOLD,15));
+             price1[i].setBackground(Color.white);
+             cat[i].setBackground(Color.white);
+             subcat[i].setBackground(Color.white);
+             qty[i].setBackground(Color.white);
+         }
+         
+          try
+        {
+            Class.forName("com.mysql.jdbc.Driver");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/restra", "restra1","restra1");
+            System.out.println("Connection Created....");
+            st = con.createStatement();
+            st1=con.createStatement();
+            System.out.println("Statement Created");
+            
+            rs = st.executeQuery("select * from purchase");
+            rs1 = st1.executeQuery("select * from purchase");
+           
+            
+            
+        }catch(Exception e)
+        {
+            System.out.println(e.toString());
+        }
+         
+         
+         add.setBackground(Color.white);
+         //ADDING OF ELEMENTS
+         vp1a.add(head);vp1b.add(choose);vp1c.add(gst);
+         vp1.add(vp1a);vp1.add(vp1b);vp1.add(vp1c);
+
+         vcenterbot.add(subtot);vcenterbot.add(subtot1);vcenterbot.add(gstadd);vcenterbot.add(gstadd1);vcenterbot.add(grandtot);vcenterbot.add(grandtot1);vcenterbot.add(pay);vcenterbot.add(pay1);
+         for(int i=0;i<12;i++)
+         {
+         vp2.add(cat[i]);
+
+         vp2.add(subcat[i]); vp2.add(qty[i]);
+         vp2.add(price[i]);
+         vp2.add(price1[i]);
+         }
+         vcenter.add(vp2,BorderLayout.CENTER);vcenter.add(vcenterbot,BorderLayout.SOUTH);
+         vp3.add(add);vp3.add(ok); vp3.add(back);vp3.add(save);
+         c.add(vptop,BorderLayout.NORTH); c.add(vcenter,BorderLayout.CENTER); c.add(vp3,BorderLayout.SOUTH);
+         this.setSize(900,700);
+         setLocation(250,10);
+         this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);//to close window
+         setVisible(true);
+         setTitle("Make A Sell");
+         for(int i=0;i<12;i++)
+         {
+          cat[i].addActionListener(this);
+         qty[i].addActionListener(this);
+
+         }
+         ok.addActionListener(this);
+         back.addActionListener(this);
+         add.addActionListener(this);
+         save.addActionListener(this);
+
+    }
+    public static void main(String args[])
+    {
+       makeasalecheck m=new makeasalecheck();
+    }
+
+} 
